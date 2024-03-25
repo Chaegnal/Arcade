@@ -119,7 +119,7 @@ void arcade::Core::loop()
     size_t indexLib = 0;
     size_t indexGame = 0;
     auto clockT0 = std::chrono::steady_clock::now();
-    unsigned int msTimer = 100;
+    unsigned int msTimer = 500;
 
     _lib[indexLib]->init(_game[indexGame]->getPattern());
     while (status == PLAYING) {

@@ -140,9 +140,14 @@ bool arcade::Nibbler::checkWin()
 
 bool arcade::Nibbler::isTJunctionUp(std::size_t x,  std::size_t y)
 {
-    return (_map[x - 1][y] == '#' &&
+    std::cout << "x :" << x << "y:" << y << std::endl;
+    std::cout << "[" <<  _map[x-1][y] << "]" << "[" << _map[x][y - 2] << "]" << "["  << _map[x][y + 1] << "]" << std::endl;
+    if (_map[x - 1][y] == '#' &&
         _map[x][y - 2] == ' ' &&
-        _map[x][y + 1] == ' ');
+        _map[x][y + 1] == ' ') {
+        return true;
+    }
+    return false;
 }
 bool arcade::Nibbler::isTJunctionDown(std::size_t x,  std::size_t y)
 {
@@ -337,20 +342,17 @@ arcade::GameStatus arcade::Nibbler::updateMap(arcade::KeyPressed key)
     if (key == BACKSPACE || key == CLOSE_BUTTON)
         return QUIT;
     if (key == UP)
-        return goUp(playerPos.first, playerPos.second);
+        goUp(playerPos.first, playerPos.second);
     if (key == DOWN)
-        return goDown(playerPos.first, playerPos.second);
+        goDown(playerPos.first, playerPos.second);
     if (key == LEFT)
-        return goLeft(playerPos.first, playerPos.second);
+        goLeft(playerPos.first, playerPos.second);
     if (key == RIGHT)
-        return goRight(playerPos.first, playerPos.second);
+        goRight(playerPos.first, playerPos.second);
     if (key == R)
         resetGame();
-    nextPlayerMove();
-    if (key == OTHER)
-        std::cout << "OTHER" << std::endl;
-    else
-        std::cout << "NOT OTHER" << std::endl;
+    // if (key == OTHER)
+        nextPlayerMove();
     return PLAYING;
 }
 
@@ -406,10 +408,14 @@ void arcade::Nibbler::nextPlayerMove()
     static KeyPressed lastMove = OTHER;
     KeyPressed playerStatus = playerMoveStatus(lastMove, x, y);
 
-    if (playerStatus != OTHER)
+    if (isTJunction(x, y)) {
+        // std::cout << "isTJUnction == true" << std::endl;
         return;
-    // if (isTJunction(x, y))
-    //     return;
+    }
+    if (playerStatus != OTHER) {
+        // std::cout << "playerStatus != OTHER" << std::endl;
+        return;
+    }
     if (isFree(_map[x][y + 1]) && isFree(_map[x][y + 2])) {
         goRight(playerPos.first, playerPos.second);
         lastMove = RIGHT;
