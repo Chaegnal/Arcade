@@ -30,7 +30,6 @@ namespace arcade
             virtual std::map<std::string, Color> getPattern() = 0;
             virtual std::vector<std::string> getText() = 0;
             virtual GameStatus updateMap(arcade::KeyPressed key) = 0;
-            virtual void nextPlayerMove() = 0;
     };
 }
 

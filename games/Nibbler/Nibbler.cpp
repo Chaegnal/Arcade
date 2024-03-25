@@ -82,6 +82,11 @@ bool arcade::Nibbler::isFree(char c)
     return (c == ' ' || c == '[' || c == ']');
 }
 
+bool arcade::Nibbler::isFreeDos(char c)
+{
+    return (c == ' ' || c == '[' || c == ']' || c == '<' || c == '>' || c == '=');
+}
+
 bool arcade::Nibbler::isFood(char firstChar, char secondChar)
 {
     return ((firstChar == '[' && secondChar == ']') ||
@@ -140,8 +145,6 @@ bool arcade::Nibbler::checkWin()
 
 bool arcade::Nibbler::isTJunctionUp(std::size_t x,  std::size_t y)
 {
-    std::cout << "x :" << x << "y:" << y << std::endl;
-    std::cout << "[" <<  _map[x-1][y] << "]" << "[" << _map[x][y - 2] << "]" << "["  << _map[x][y + 1] << "]" << std::endl;
     if (_map[x - 1][y] == '#' &&
         _map[x][y - 2] == ' ' &&
         _map[x][y + 1] == ' ') {
@@ -341,18 +344,18 @@ arcade::GameStatus arcade::Nibbler::updateMap(arcade::KeyPressed key)
         return WON;
     if (key == BACKSPACE || key == CLOSE_BUTTON)
         return QUIT;
+    std::cout << key << std::endl;
     if (key == UP)
-        goUp(playerPos.first, playerPos.second);
+        return goUp(playerPos.first, playerPos.second);
     if (key == DOWN)
-        goDown(playerPos.first, playerPos.second);
+        return goDown(playerPos.first, playerPos.second);
     if (key == LEFT)
-        goLeft(playerPos.first, playerPos.second);
+        return goLeft(playerPos.first, playerPos.second);
     if (key == RIGHT)
-        goRight(playerPos.first, playerPos.second);
+        return goRight(playerPos.first, playerPos.second);
     if (key == R)
         resetGame();
-    // if (key == OTHER)
-        nextPlayerMove();
+    nextPlayerMove();
     return PLAYING;
 }
 
@@ -374,25 +377,25 @@ arcade::KeyPressed arcade::Nibbler::playerMoveStatus(arcade::KeyPressed lastMove
     std::size_t x, std::size_t y)
 {
     if (lastMove == RIGHT) {
-        if (isFree(_map[x][y + 1]) && isFree(_map[x][y + 2])) {
+        if (isFreeDos(_map[x][y + 1]) && isFreeDos(_map[x][y + 2])) {
             goRight(x, y);
             return RIGHT;
         }
     }
     if (lastMove == UP) {
-        if (isFree(_map[x - 1][y - 1]) && isFree(_map[x - 1][y])) {
+        if (isFreeDos(_map[x - 1][y - 1]) && isFreeDos(_map[x - 1][y])) {
             goUp(x, y);
             return UP;
         }
     }
     if (lastMove == LEFT) {
-        if (isFree(_map[x][y - 2]) && isFree(_map[x][y - 3])) {
+        if (isFreeDos(_map[x][y - 2]) && isFreeDos(_map[x][y - 3])) {
             goLeft(x, y);
             return LEFT;
         }
     }
     if (lastMove == DOWN) {
-        if (isFree(_map[x + 1][y - 1]) && isFree(_map[x + 1][y])) {
+        if (isFreeDos(_map[x + 1][y - 1]) && isFreeDos(_map[x + 1][y])) {
             goDown(x, y);
             return DOWN;
         }
@@ -400,7 +403,7 @@ arcade::KeyPressed arcade::Nibbler::playerMoveStatus(arcade::KeyPressed lastMove
     return OTHER;
 }
 
-void arcade::Nibbler::nextPlayerMove()
+arcade::KeyPressed arcade::Nibbler::nextPlayerMove()
 {
     std::pair<std::size_t, std::size_t> playerPos = getPlayerHeadPos();
     std::size_t x = playerPos.first;
@@ -409,31 +412,30 @@ void arcade::Nibbler::nextPlayerMove()
     KeyPressed playerStatus = playerMoveStatus(lastMove, x, y);
 
     if (isTJunction(x, y)) {
-        // std::cout << "isTJUnction == true" << std::endl;
-        return;
+        std::cout << "isTJunction == true" << std::endl;
+        return OTHER;
     }
-    if (playerStatus != OTHER) {
-        // std::cout << "playerStatus != OTHER" << std::endl;
-        return;
-    }
-    if (isFree(_map[x][y + 1]) && isFree(_map[x][y + 2])) {
+    if (playerStatus != OTHER)
+        return playerStatus;
+    if (isFreeDos(_map[x][y + 1]) && isFreeDos(_map[x][y + 2])) {
         goRight(playerPos.first, playerPos.second);
         lastMove = RIGHT;
-        return;
+        return lastMove;
     }
-    if (isFree(_map[x - 1][y - 1]) && isFree(_map[x - 1][y])) {
+    if (isFreeDos(_map[x - 1][y - 1]) && isFreeDos(_map[x - 1][y])) {
         goUp(playerPos.first, playerPos.second);
         lastMove = UP;
-        return;
+        return lastMove;
     }
-    if (isFree(_map[x][y - 2]) && isFree(_map[x][y - 3])) {
+    if (isFreeDos(_map[x][y - 2]) && isFreeDos(_map[x][y - 3])) {
         goLeft(playerPos.first, playerPos.second);
         lastMove = LEFT;
-        return;
+        return lastMove;
     }
-    if (isFree(_map[x + 1][y - 1]) && isFree(_map[x + 1][y])) {
+    if (isFreeDos(_map[x + 1][y - 1]) && isFreeDos(_map[x + 1][y])) {
         goDown(playerPos.first, playerPos.second);
         lastMove = DOWN;
-        return;
+        return lastMove;
     }
+    return lastMove;
 }

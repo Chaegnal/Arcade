@@ -119,7 +119,7 @@ void arcade::Core::loop()
     size_t indexLib = 0;
     size_t indexGame = 0;
     auto clockT0 = std::chrono::steady_clock::now();
-    unsigned int msTimer = 500;
+    unsigned int msTimer = 75;
 
     _lib[indexLib]->init(_game[indexGame]->getPattern());
     while (status == PLAYING) {
@@ -132,10 +132,10 @@ void arcade::Core::loop()
         if (timeElapsed.count() > msTimer) {
             status = _game[indexGame]->updateMap(_lib[indexLib]->getKey());
             clockT0 = std::chrono::steady_clock::now();
+            _lib[indexLib]->setKey(OTHER);
         }
         indexLib = manageDynamicSwitchLib(indexLib, indexGame);
         indexGame = manageDynamicSwitchGame(indexLib, indexGame);
-        // _lib[indexLib]->setKey(OTHER);
     }
     _lib[indexLib]->stop();
 }
