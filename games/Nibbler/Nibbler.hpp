@@ -25,7 +25,7 @@ namespace arcade
             std::map<std::string, Color> getPattern() override;
             std::vector<std::string> getText() override;
             GameStatus updateMap(KeyPressed key) override;
-            KeyPressed nextPlayerMove() override;
+            void nextPlayerMove() override;
 
         private:
             GameStatus goUp(std::size_t x, std::size_t y);
